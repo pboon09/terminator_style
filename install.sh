@@ -37,11 +37,16 @@ if ! fc-list | grep -qi "JetBrainsMono.*Propo"; then
   fc-cache -fv >/dev/null
   rm -rf "$TMP"
 fi
-fc-list | grep -ci "JetBrainsMono.*Propo" | xargs -I{} echo "JetBrainsMono Propo variants installed: {}"
+echo "JetBrainsMono Propo variants installed: $(fc-list | grep -ci 'JetBrainsMono.*Propo')"
 
 echo "[5/5] Configuring Starship + ble.sh in ~/.bashrc (Terminator only)"
 mkdir -p "$(dirname "$STARSHIP_CONFIG")"
-starship preset gruvbox-rainbow -o "$STARSHIP_CONFIG"
+if [ ! -f "$STARSHIP_CONFIG" ]; then
+  starship preset gruvbox-rainbow -o "$STARSHIP_CONFIG"
+  echo "Wrote default starship.toml (gruvbox-rainbow preset)"
+else
+  echo "$STARSHIP_CONFIG already exists, leaving it alone"
+fi
 
 if ! grep -q "$MARK_BEGIN" "$BASHRC" 2>/dev/null; then
   cat >> "$BASHRC" << EOF
